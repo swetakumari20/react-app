@@ -1,0 +1,78 @@
+const Successfully = () => {
+  const { token } = useParams();
+  const dispatch: ThunkDispatch<any, void, any> = useDispatch();
+
+  const { verification, loading } = useAppSelector((state: any) => state?.user);
+
+  const URL =
+    import.meta.env.VITE_NODE_ENV === "production"
+      ? import.meta.env.VITE_COPY_BASE_URL_PROD
+      : import.meta.env.VITE_NODE_ENV === "qa"
+        ? import.meta.env.VITE_BASE_URL_QA
+        : import.meta.env.VITE_NODE_ENV === "development"
+          ? import.meta.env.VITE__URL_DEVELOPMENT
+          : import.meta.env.VITE_NODE_ENV === "production" ? import.meta.env.VITE_IMG_URL_PROD : import.meta.env.VITE_IMG_URL;
+
+  useEffect(() => {
+    if (token) {
+      dispatch(userVerificationAsync(token));
+    }
+  }, [token]);
+  
+  return (
+    <div>
+      <div>
+        {loading && (
+          <div className="custom-spinner-container">
+            <Spinner />
+          </div>
+        )}
+        <div>
+          <DashboardHeader />
+
+          {verification ? (
+
+            <div className="successPopup position-static bg-white">
+              <div >
+                <div className="success-message p-3" id="success-message">
+                  <div className="congra-msg d-flex flex-column gap-1 align-items-center ">
+                    <img src={ok} alt="" />
+                    <h3>Congratulations!</h3>
+                    <p>
+                      Your Email has been Verified.
+                    </p>
+
+                    <button
+                      onClick={() => window.location.href = URL}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          ) : (
+
+            <div className="successPopup position-static bg-white">
+              <div >
+                <div className="success-message p-3" id="success-message">
+                  <div className="congra-msg d-flex flex-column gap-1 align-items-center ">
+                    <img src={error} alt="" />
+                    <h5 className="mt-3 text-danger">Something Went Wrong.</h5>
+
+                    <button onClick={() => window.location.href = URL} style={{ cursor: "pointer", marginTop: "18px" }} >Not a valid URL</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          <Footer />
+        </div>
+      </div>
+    </div>
+  );
+};
